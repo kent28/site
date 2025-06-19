@@ -165,9 +165,8 @@ $(document).ready(function() {
     // Загрузка CAPTCHA при открытии формы
     function loadCaptcha() {
         $.get('register.php', function(data) {
-            var response = JSON.parse(data);
-            $('#captchaText').text(response.captcha);
-        });
+            $('#captchaText').text(data.captcha);
+        }, 'json');
     }
 
     loadCaptcha();
@@ -221,8 +220,8 @@ $(document).ready(function() {
             url: 'register.php',
             type: 'POST',
             data: $(this).serialize(),
-            success: function(response) {
-                var result = JSON.parse(response);
+            dataType: 'json',
+            success: function(result) {
                 $('#errorMessages').empty();
                 $('#successMessage').empty();
                 if (result.success) {
