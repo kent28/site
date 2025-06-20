@@ -8,14 +8,38 @@ body {
     color: #fff;
 }
 
-header {
-    background: linear-gradient(to bottom, #734419 0%, #332009 100%);
-    padding: 15px;
-    border-bottom: 4px solid #ffcc00;
-    box-shadow: 0 0 15px #ffcc00;
+/* Top navigation bar */
+.top-nav {
+    background: linear-gradient(#333, #222);
+    height: 50px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+}
+
+.top-nav a {
+    color: #ffcc00;
+    margin: 0 10px;
+    text-decoration: none;
+    font-family: 'Pirata One', cursive;
+    font-size: 1.1em;
+}
+
+.top-nav a:hover {
+    color: #fff;
+    text-shadow: 0 0 5px #ffcc00, 0 0 10px #fff;
+}
+
+/* Banner area */
+header {
+    background: linear-gradient(to bottom, #734419 0%, #332009 100%);
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 4px solid #ffcc00;
+    box-shadow: 0 0 15px #ffcc00;
+    padding: 0;
 }
 
 header h1 {
@@ -23,19 +47,6 @@ header h1 {
     font-family: 'Pirata One', 'Cinzel', serif;
     color: #ffcc00;
     text-shadow: 0 0 10px #fff;
-}
-
-nav a {
-    color: #ffcc00;
-    margin-right: 15px;
-    text-decoration: none;
-    font-family: 'Pirata One', cursive;
-    font-size: 1.1em;
-}
-
-nav a:hover {
-    color: #fff;
-    text-shadow: 0 0 5px #ffcc00, 0 0 10px #fff;
 }
 
 main {
@@ -82,13 +93,14 @@ footer {
 }
 
 /* Layout elements for main page */
+
 .main-container {
     display: flex;
     gap: 20px;
+    justify-content: center;
 }
 
 .sidebar {
-    width: 20%;
     background: rgba(0, 0, 0, 0.5);
     padding: 15px;
     border: 2px solid #ffcc00;
@@ -96,8 +108,17 @@ footer {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+.sidebar.left {
+    width: 230px;
+}
+
+.sidebar.right {
+    width: 260px;
+}
+
 .main-content {
     flex: 1;
+    max-width: 640px;
 }
 
 .logo {
@@ -110,7 +131,7 @@ footer {
 }
 
 .slider {
-    height: 200px;
+    height: 250px;
     background: linear-gradient(#005b96, #003f6d);
     border: 2px solid #ffcc00;
     border-radius: 8px;
