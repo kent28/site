@@ -323,4 +323,88 @@ function getServerLoad() {
     return 0;
 }
 
+function getCachedRanking($file, $time, $callback) {
+    if (file_exists($file) && (time() - filemtime($file) < $time)) {
+        $data = json_decode(file_get_contents($file), true);
+        if (is_array($data)) {
+            return $data;
+        }
+    }
+    $data = $callback();
+    if ($data !== false) {
+        @file_put_contents($file, json_encode($data));
+        return $data;
+    }
+    return [];
+}
+
+function getTopExpPlayers($limit = 10) {
+    global $config;
+    $cache = __DIR__ . '/../data/rank_exp.json';
+    return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
+        $sql = 'SELECT TOP ' . (int)$limit .
+               ' cha_name, degree, exp FROM ' . TABLE_CHARACTERS .
+               ' ORDER BY CASE WHEN exp < 0 THEN exp + 4294967296 ELSE exp END DESC';
+        $query = doQuery($sql, DATABASE_GAME);
+        if ($query === false) {
+            return false;
+        }
+        $result = [];
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = [
+                'name'  => $row['cha_name'],
+                'level' => (int)$row['degree'],
+                'exp'   => (int)$row['exp']
+            ];
+        }
+        return $result;
+    });
+}
+
+function getTopGoldPlayers($limit = 10) {
+    global $config;
+    $cache = __DIR__ . '/../data/rank_gold.json';
+    return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
+        $sql = 'SELECT TOP ' . (int)$limit .
+               ' cha_name, degree, gd FROM ' . TABLE_CHARACTERS .
+               ' ORDER BY gd DESC';
+        $query = doQuery($sql, DATABASE_GAME);
+        if ($query === false) {
+            return false;
+        }
+        $result = [];
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = [
+                'name'  => $row['cha_name'],
+                'level' => (int)$row['degree'],
+                'gold'  => (int)$row['gd']
+            ];
+        }
+        return $result;
+    });
+}
+
+function getTopGuilds($limit = 10) {
+    global $config;
+    $cache = __DIR__ . '/../data/rank_guild.json';
+    return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
+        $sql = 'SELECT TOP ' . (int)$limit .
+               ' guild_name, motto, member_total FROM ' . TABLE_GUILDS .
+               ' WHERE member_total > 0 ORDER BY member_total DESC';
+        $query = doQuery($sql, DATABASE_GAME);
+        if ($query === false) {
+            return false;
+        }
+        $result = [];
+        while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = [
+                'name'    => $row['guild_name'],
+                'motto'   => $row['motto'],
+                'members' => (int)$row['member_total']
+            ];
+        }
+        return $result;
+    });
+}
+
 ?>

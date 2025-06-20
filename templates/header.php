@@ -23,7 +23,7 @@ require_once __DIR__ . '/../includes/functions.php';
         <a href="index.php">Главная</a>
         <a href="#">Сообщество</a>
         <a href="download.php">Загрузки</a>
-        <a href="#">Рейтинги</a>
+        <a href="ranking.php">Рейтинги</a>
         <a href="#">База Знаний</a>
         <a href="#">Расписание локаций</a>
         <a href="#">Об игре</a>
