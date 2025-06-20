@@ -9,6 +9,8 @@ require_once __DIR__ . '/../includes/config.php';
     <title><?php echo htmlspecialchars($config['servername']); ?></title>
     <link rel="stylesheet" href="templates/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/jclock.js"></script>
+    <script src="js/stats.js"></script>
 </head>
 <body>
 <header>

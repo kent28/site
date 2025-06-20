@@ -6,19 +6,15 @@ include 'templates/header.php';
         <div class="stats">
             <h3>Статистика</h3>
             <ul>
-                <li>Время игры: 00:16</li>
-                <li>Онлайн: 40 игроков</li>
-                <li>Аккаунтов: 972</li>
-                <li>Персонажей: 905</li>
-                <li>Гильдий: 20</li>
-                <li>Модератор онлайн: [GM] Админ</li>
-                <li>Нагрузка сервера: 21%</li>
+                <li>Время игры: <span id="stat-time">--:--</span></li>
+                <li>Онлайн: <span id="stat-online">--</span></li>
+                <li>Аккаунтов: <span id="stat-accounts">--</span></li>
+                <li>Персонажей: <span id="stat-characters">--</span></li>
+                <li>Гильдий: <span id="stat-guilds">--</span></li>
+                <li>Модератор онлайн: <span id="stat-gm-online">--</span></li>
+                <li>Нагрузка сервера: <span id="stat-load">--</span></li>
             </ul>
-            <h4>Скорость развития</h4>
-            <ul>
-                <li>Игровой уровень x8</li>
-                <li>В отряде x12</li>
-            </ul>
+            <h4>Время сервера: <span id="jclock1">--:--:--</span></h4>
         </div>
     </aside>
 
@@ -79,6 +75,8 @@ $(document).ready(function(){
             $('#registrationModal').hide();
         }
     });
+
+    $('#jclock1').jclock({utc: true});
 });
 </script>
 <?php include 'templates/footer.php'; ?>
