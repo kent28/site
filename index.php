@@ -23,6 +23,14 @@ include 'templates/header.php';
         <div class="slider">Здесь будет слайдер с подземельями и сокровищами</div>
         <h3>Игровые новости</h3>
         <p><?php echo htmlspecialchars($config['slogan']); ?></p>
+        <?php
+        $newsFile = __DIR__ . '/data/news.html';
+        if (file_exists($newsFile)) {
+            include $newsFile;
+        } else {
+            echo '<p>Новости еще не опубликованы.</p>';
+        }
+        ?>
     </div>
 
     <aside class="sidebar right">
