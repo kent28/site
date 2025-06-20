@@ -3,7 +3,7 @@
 $config = array();
 
 // Общие настройки сайта
-$config['servername'] = 'Your Private Server'; // Название вашего сервера
+$config['servername'] = 'New Era server'; // Название вашего сервера
 $config['slogan'] = 'Slogan'; // Слоган
 $config['disable_registration'] = false; // Отключение регистрации
 $config['allow_dupe_email'] = false; // Разрешение дублирования email
