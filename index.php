@@ -47,6 +47,8 @@ include 'templates/header.php';
                 </ul>
                 <p>Донат валюта: 0</p>
                 <a href="account.php">Редактировать профиль</a>
+                <br>
+                <a href="logout.php">Выйти</a>
             <?php endif; ?>
         </div>
         <div class="character-stats">
