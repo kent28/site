@@ -260,6 +260,26 @@ function getAccountInfo($username) {
     return false;
 }
 
+function getAccountCharacters($username) {
+    $sql = 'SELECT act_id FROM ' . TABLE_ACCOUNT . ' WHERE act_name = \'' . addslashes_mssql($username) . '\'';
+    $query = doQuery($sql, DATABASE_GAME);
+    if ($query !== false) {
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $actId = (int)$row['act_id'];
+            $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE act_id = ' . $actId, DATABASE_GAME);
+            if ($charQuery !== false) {
+                $names = [];
+                while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
+                    $names[] = $charRow['cha_name'];
+                }
+                return $names;
+            }
+        }
+    }
+    return [];
+}
+
 function updateAccountEmail($username, $email) {
     $query = doQuery("UPDATE " . TABLE_ACCOUNT_LOGIN . " SET email = '" . addslashes_mssql($email) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     return $query !== false;
