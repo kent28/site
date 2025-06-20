@@ -15,12 +15,12 @@ require_once __DIR__ . '/../includes/config.php';
     <h1><?php echo htmlspecialchars($config['servername']); ?></h1>
     <nav>
         <a href="index.php">Главная</a>
-        <a href="news.php">Новости</a>
-        <a href="login.php">Вход</a>
-        <a href="account.php">Личный кабинет</a>
-        <a href="download.php">Скачать</a>
-        <a href="contact.php">Форма</a>
-        <a href="store.php">Магазин</a>
+        <a href="#">Сообщество</a>
+        <a href="download.php">Загрузки</a>
+        <a href="#">Рейтинги</a>
+        <a href="#">База Знаний</a>
+        <a href="#">Расписание локаций</a>
+        <a href="#">Об игре</a>
     </nav>
 </header>
 <main>

@@ -1,42 +1,54 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Open+Sans&family=Pirata+One&display=swap');
 
 body {
     font-family: 'Open Sans', Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    background: linear-gradient(to bottom, #0e1d2c 0%, #123044 100%);
     color: #fff;
 }
+
 header {
-    background: linear-gradient(#191919, #000);
-    padding: 10px;
-    border-bottom: 3px solid #d4af37;
-    box-shadow: 0 0 10px #d4af37;
+    background: linear-gradient(to bottom, #734419 0%, #332009 100%);
+    padding: 15px;
+    border-bottom: 4px solid #ffcc00;
+    box-shadow: 0 0 15px #ffcc00;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+
 header h1 {
-    margin: 0 0 10px 0;
-    font-family: 'Cinzel', serif;
-    text-shadow: 0 0 5px #d4af37;
+    margin: 0;
+    font-family: 'Pirata One', 'Cinzel', serif;
+    color: #ffcc00;
+    text-shadow: 0 0 10px #fff;
 }
+
 nav a {
-    color: #d4af37;
-    margin-right: 10px;
+    color: #ffcc00;
+    margin-right: 15px;
     text-decoration: none;
-    font-family: 'Cinzel', serif;
+    font-family: 'Pirata One', cursive;
+    font-size: 1.1em;
 }
+
 nav a:hover {
-    text-shadow: 0 0 5px #fff, 0 0 10px #d4af37;
+    color: #fff;
+    text-shadow: 0 0 5px #ffcc00, 0 0 10px #fff;
 }
+
 main {
     padding: 20px;
 }
+
 footer {
-    background: linear-gradient(#000, #191919);
+    background: linear-gradient(#332009, #734419);
     color: #ccc;
     text-align: center;
     padding: 10px;
-    border-top: 3px solid #d4af37;
-    box-shadow: 0 0 10px #d4af37;
+    border-top: 4px solid #ffcc00;
+    box-shadow: 0 0 15px #ffcc00;
 }
 .modal {
     display: none;
@@ -67,4 +79,85 @@ footer {
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+}
+
+/* Layout elements for main page */
+.main-container {
+    display: flex;
+    gap: 20px;
+}
+
+.sidebar {
+    width: 20%;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border: 2px solid #ffcc00;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.main-content {
+    flex: 1;
+}
+
+.logo {
+    text-align: center;
+    font-family: 'Pirata One', cursive;
+    font-size: 3em;
+    color: #ffcc00;
+    margin: 20px 0;
+    text-shadow: 0 0 10px #fff;
+}
+
+.slider {
+    height: 200px;
+    background: linear-gradient(#005b96, #003f6d);
+    border: 2px solid #ffcc00;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.stats ul,
+.character-stats ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.stats li,
+.character-stats li {
+    margin: 5px 0;
+}
+
+.login-box form input[type="text"],
+.login-box form input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ffcc00;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.login-box input[type="submit"],
+.login-box button {
+    background: #ffcc00;
+    color: #000;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.login-box a {
+    color: #ffcc00;
+    text-decoration: none;
+    font-size: 0.9em;
 }
