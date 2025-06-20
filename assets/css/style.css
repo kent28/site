@@ -196,6 +196,7 @@ footer {
 .news-nav a.tab-updates { background: #5cb85c; }
 .news-nav a.tab-events { background: #5bc0de; }
 .news-nav a.tab-other { background: #9370db; }
+.news-nav a.tab-admin { background: #444; }
 
 .news-list {
     list-style: none;
@@ -238,6 +239,30 @@ footer {
     color: #555;
     margin-left: 10px;
 }
+
+.news-slider {
+    position: relative;
+    overflow: hidden;
+}
+
+.news-controls {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.news-controls button {
+    background: #ffcc00;
+    color: #000;
+    border: none;
+    padding: 4px 8px;
+    margin: 0 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.news-item { display: none; }
+.news-item.active { display: flex; }
 
 .stats ul,
 .character-stats ul {

@@ -38,8 +38,18 @@ include 'templates/header.php';
 <?php if ($success): ?>
     <div class="success"><?php echo htmlspecialchars($success); ?></div>
 <?php endif; ?>
-<form action="edit_news.php" method="post">
-    <textarea name="content" rows="10" cols="80"><?php echo htmlspecialchars($content); ?></textarea><br>
+<form action="edit_news.php" method="post" onsubmit="document.getElementById('content').value=document.getElementById('editor').innerHTML;">
+    <div id="toolbar">
+        <button type="button" data-cmd="bold"><b>B</b></button>
+        <button type="button" data-cmd="italic"><i>I</i></button>
+        <button type="button" data-cmd="underline"><u>U</u></button>
+    </div>
+    <div id="editor" contenteditable="true" style="border:1px solid #ccc;min-height:200px;padding:5px;">
+        <?php echo $content; ?>
+    </div>
+    <input type="hidden" name="content" id="content">
+    <br>
     <input type="submit" value="Сохранить">
 </form>
+<script src="assets/js/editor.js"></script>
 <?php include 'templates/footer.php'; ?>

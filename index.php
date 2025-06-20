@@ -26,6 +26,7 @@ include 'templates/header.php';
             $newsFile = __DIR__ . '/data/news.html';
             if (file_exists($newsFile)) {
                 include $newsFile;
+                echo '<script src="assets/js/news.js"></script>';
             } else {
                 echo '<p>Новости еще не опубликованы.</p>';
             }
