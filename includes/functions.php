@@ -361,16 +361,19 @@ function getCachedRanking($file, $time, $callback) {
 function getTopExpPlayers($limit = 10) {
     global $config;
     $cache = __DIR__ . '/../data/rank_exp.json';
+
     return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
         $sql = 'SELECT TOP ' . (int)$limit .
-               ' c.cha_name, c.degree, c.exp FROM ' . TABLE_CHARACTERS . ' c '
-               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id '
-               'WHERE a.gm <> 99 '
+               ' c.cha_name, c.degree, c.exp FROM ' . TABLE_CHARACTERS . ' c ' .
+               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id ' .
+               'WHERE a.gm <> 99 ' .
                'ORDER BY CASE WHEN c.exp < 0 THEN c.exp + 4294967296 ELSE c.exp END DESC';
+
         $query = doQuery($sql, DATABASE_GAME);
         if ($query === false) {
             return false;
         }
+
         $result = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $result[] = [
@@ -379,6 +382,7 @@ function getTopExpPlayers($limit = 10) {
                 'exp'   => (int)$row['exp']
             ];
         }
+
         return $result;
     });
 }
@@ -386,16 +390,19 @@ function getTopExpPlayers($limit = 10) {
 function getTopGoldPlayers($limit = 10) {
     global $config;
     $cache = __DIR__ . '/../data/rank_gold.json';
+
     return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
         $sql = 'SELECT TOP ' . (int)$limit .
-               ' c.cha_name, c.degree, c.gd FROM ' . TABLE_CHARACTERS . ' c '
-               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id '
-               'WHERE a.gm <> 99 '
+               ' c.cha_name, c.degree, c.gd FROM ' . TABLE_CHARACTERS . ' c ' .
+               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id ' .
+               'WHERE a.gm <> 99 ' .
                'ORDER BY c.gd DESC';
+
         $query = doQuery($sql, DATABASE_GAME);
         if ($query === false) {
             return false;
         }
+
         $result = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $result[] = [
@@ -404,6 +411,7 @@ function getTopGoldPlayers($limit = 10) {
                 'gold'  => (int)$row['gd']
             ];
         }
+
         return $result;
     });
 }
