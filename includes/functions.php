@@ -253,7 +253,7 @@ function isUserLoggedIn() {
 }
 
 function getAccountInfo($username) {
-    $query = doQuery('SELECT * FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = '\'' . addslashes_mssql($username) . '\'', DATABASE_ACCOUNT);
+    $query = doQuery("SELECT * FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
         return $query->fetch(PDO::FETCH_ASSOC);
     }
@@ -261,18 +261,18 @@ function getAccountInfo($username) {
 }
 
 function updateAccountEmail($username, $email) {
-    $query = doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . " SET email = '" . addslashes_mssql($email) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
+    $query = doQuery("UPDATE " . TABLE_ACCOUNT_LOGIN . " SET email = '" . addslashes_mssql($email) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     return $query !== false;
 }
 
 function updateAccountPassword($username, $password) {
     $hash = strtoupper(md5($password));
-    $query = doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . " SET password = '" . $hash . "', originalpassword = '" . addslashes_mssql($password) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
+    $query = doQuery("UPDATE " . TABLE_ACCOUNT_LOGIN . " SET password = '" . $hash . "', originalpassword = '" . addslashes_mssql($password) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     return $query !== false;
 }
 
 function isBanned($username) {
-    $query = doQuery('SELECT ban FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = '\'' . addslashes_mssql($username) . '\'', DATABASE_ACCOUNT);
+    $query = doQuery("SELECT ban FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
         return $row && (int)$row['ban'] > 0;
