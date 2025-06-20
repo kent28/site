@@ -11,6 +11,7 @@ if (!isUserLoggedIn()) {
 
 $username = $_SESSION['user'];
 $account = getAccountInfo($username);
+$characters = getAccountCharacters($username);
 $errors = [];
 $success = '';
 
@@ -67,6 +68,14 @@ include 'templates/header.php';
 <?php endif; ?>
 <p>Имя пользователя: <?php echo htmlspecialchars($username); ?></p>
 <p>Email: <?php echo htmlspecialchars($account['email'] ?? ''); ?></p>
+<p>Персонажи на аккаунте:</p>
+<ul>
+    <?php foreach ($characters as $char): ?>
+        <li><?php echo htmlspecialchars($char); ?></li>
+    <?php endforeach; ?>
+</ul>
+<p>Донат валюта: 0</p>
+<button>Пополнить баланс</button>
 
 <h3>Смена пароля</h3>
 <form action="account.php" method="post">
