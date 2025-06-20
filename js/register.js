@@ -58,7 +58,7 @@ $(document).ready(function() {
         $.ajax({
             url: 'register.php',
             type: 'POST',
-            data: $(this).serialize(),
+            data: $(this).serialize() + '&register=1',
             dataType: 'json',
             success: function(result) {
                 $('#errorMessages').empty();
