@@ -2,7 +2,7 @@
 include 'templates/header.php';
 ?>
 <div class="main-container">
-    <aside class="sidebar">
+    <aside class="sidebar left">
         <div class="stats">
             <h3>Статистика</h3>
             <ul>
@@ -25,7 +25,7 @@ include 'templates/header.php';
         <p><?php echo htmlspecialchars($config['slogan']); ?></p>
     </div>
 
-    <aside class="sidebar">
+    <aside class="sidebar right">
         <div class="login-box">
             <?php if (!isUserLoggedIn()): ?>
                 <h3>Вход в игру</h3>
