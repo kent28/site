@@ -28,6 +28,9 @@ $config['db']['game'] = array(
 // Определение констант
 define('TABLE_ACCOUNT_LOGIN', 'account_login'); // Имя таблицы для учетных записей
 define('TABLE_ACCOUNT', 'account'); // Имя таблицы для аккаунтов
+// Дополнительные таблицы для статистики
+define('TABLE_CHARACTERS', 'characters');
+define('TABLE_GUILDS', 'guilds');
 define('DATABASE_ACCOUNT', 'account'); // Имя базы данных для учетных записей
 define('DATABASE_GAME', 'game'); // Имя базы данных для игры
 

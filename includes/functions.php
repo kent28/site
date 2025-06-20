@@ -280,4 +280,38 @@ function isBanned($username) {
     return false;
 }
 
+// ----- Функции статистики -----
+
+function getAccountsCount() {
+    $query = doQuery('SELECT COUNT(*) AS cnt FROM ' . TABLE_ACCOUNT_LOGIN, DATABASE_ACCOUNT);
+    return $query !== false ? (int)$query->fetchColumn() : 0;
+}
+
+function getCharactersCount() {
+    $query = doQuery('SELECT COUNT(*) AS cnt FROM ' . TABLE_CHARACTERS, DATABASE_GAME);
+    return $query !== false ? (int)$query->fetchColumn() : 0;
+}
+
+function getGuildsCount() {
+    $query = doQuery('SELECT COUNT(*) AS cnt FROM ' . TABLE_GUILDS, DATABASE_GAME);
+    return $query !== false ? (int)$query->fetchColumn() : 0;
+}
+
+function getOnlineCount() {
+    $query = doQuery('SELECT COUNT(*) AS cnt FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE login_status > 0', DATABASE_ACCOUNT);
+    return $query !== false ? (int)$query->fetchColumn() : 0;
+}
+
+function getGMOnline() {
+    $sql = "SELECT TOP 1 name FROM " . TABLE_ACCOUNT_LOGIN . " WHERE login_status > 0 AND gm > 0";
+    $query = doQuery($sql, DATABASE_ACCOUNT);
+    $name = ($query !== false) ? $query->fetchColumn() : '';
+    return $name ? '[GM] ' . $name : '';
+}
+
+function getServerLoad() {
+    // Здесь может быть логика вычисления нагрузки сервера
+    return 0;
+}
+
 ?>
