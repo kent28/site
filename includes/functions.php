@@ -222,4 +222,26 @@ function createAccount($username, $password, $email) {
     }
     return false;
 }
+
+function loginUser($username, $password) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $query = doQuery(
+        'SELECT password FROM ' . TABLE_ACCOUNT_LOGIN .
+        ' WHERE name = \'' . addslashes_mssql($username) . '\'',
+        DATABASE_ACCOUNT
+    );
+
+    if ($query !== false) {
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+        if ($row && strtoupper(md5($password)) === $row['password']) {
+            $_SESSION['user'] = $username;
+            return true;
+        }
+    }
+
+    return false;
+}
 ?>
