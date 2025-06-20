@@ -26,7 +26,7 @@ $successMessage = '';
 $errors = [];
 
 // Проверка, была ли отправлена форма
-if (isset($_POST['register'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['reg_username'] ?? '');
     $password = trim($_POST['reg_password'] ?? '');
     $password2 = trim($_POST['reg_password2'] ?? '');
