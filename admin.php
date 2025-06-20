@@ -39,4 +39,5 @@ include 'templates/header.php';
     <li>Игроков онлайн: <?php echo $stats['online']; ?></li>
     <li>Модератор онлайн: <?php echo htmlspecialchars($stats['gm_online']); ?></li>
 </ul>
+<p><a href="edit_news.php">Редактировать новости</a></p>
 <?php include 'templates/footer.php'; ?>

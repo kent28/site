@@ -328,10 +328,10 @@ function isBanned($username) {
 }
 
 function isAdmin($username) {
-    $query = doQuery("SELECT gm FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
+    $query = doQuery("SELECT gm FROM " . TABLE_ACCOUNT . " WHERE act_name = '" . addslashes_mssql($username) . "'", DATABASE_GAME);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
-        return $row && (int)$row['gm'] > 0;
+        return $row && (int)$row['gm'] == 99;
     }
     return false;
 }
@@ -390,8 +390,10 @@ function getTopExpPlayers($limit = 10) {
     $cache = __DIR__ . '/../data/rank_exp.json';
     return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
         $sql = 'SELECT TOP ' . (int)$limit .
-               ' cha_name, degree, exp FROM ' . TABLE_CHARACTERS .
-               ' ORDER BY CASE WHEN exp < 0 THEN exp + 4294967296 ELSE exp END DESC';
+               ' c.cha_name, c.degree, c.exp FROM ' . TABLE_CHARACTERS . ' c '
+               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id '
+               'WHERE a.gm <> 99 '
+               'ORDER BY CASE WHEN c.exp < 0 THEN c.exp + 4294967296 ELSE c.exp END DESC';
         $query = doQuery($sql, DATABASE_GAME);
         if ($query === false) {
             return false;
@@ -413,8 +415,10 @@ function getTopGoldPlayers($limit = 10) {
     $cache = __DIR__ . '/../data/rank_gold.json';
     return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
         $sql = 'SELECT TOP ' . (int)$limit .
-               ' cha_name, degree, gd FROM ' . TABLE_CHARACTERS .
-               ' ORDER BY gd DESC';
+               ' c.cha_name, c.degree, c.gd FROM ' . TABLE_CHARACTERS . ' c '
+               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id '
+               'WHERE a.gm <> 99 '
+               'ORDER BY c.gd DESC';
         $query = doQuery($sql, DATABASE_GAME);
         if ($query === false) {
             return false;
