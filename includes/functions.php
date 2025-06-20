@@ -301,7 +301,7 @@ function isBanned($username) {
 }
 
 function isAdmin($username) {
-    $query = doQuery('SELECT gm FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = '\'' . addslashes_mssql($username) . '\'', DATABASE_ACCOUNT);
+    $query = doQuery("SELECT gm FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
         return $row && (int)$row['gm'] > 0;
