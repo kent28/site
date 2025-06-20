@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 include 'templates/header.php';
 ?>
 <h2>Личный кабинет</h2>
+<p><a href="logout.php">Выйти</a></p>
 <?php if ($success): ?>
 <div class="success"><?php echo htmlspecialchars($success); ?></div>
 <?php endif; ?>

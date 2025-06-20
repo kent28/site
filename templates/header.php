@@ -25,8 +25,15 @@ require_once __DIR__ . '/../includes/functions.php';
     <a href="#">База Знаний</a>
     <a href="#">Расписание локаций</a>
     <a href="#">Об игре</a>
-    <?php if (isUserLoggedIn() && isAdmin($_SESSION['user'])): ?>
-    <a href="admin.php">Админка</a>
+    <?php if (isUserLoggedIn()): ?>
+        <a href="account.php">Личный кабинет</a>
+        <?php if (isAdmin($_SESSION['user'])): ?>
+            <a href="admin.php">Админка</a>
+        <?php endif; ?>
+        <a href="logout.php">Выход</a>
+    <?php else: ?>
+        <a href="login.php">Вход</a>
+        <a href="register.php">Регистрация</a>
     <?php endif; ?>
 </nav>
 <header>
