@@ -85,7 +85,7 @@ $(document).ready(function(){
         e.preventDefault();
         $('#registrationModal').show();
         $('#registrationContainer').load('templates/register.html', function(){
-            $.getScript('js/register.js');
+            $.getScript('assets/js/register.js');
         });
     });
 

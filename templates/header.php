@@ -11,10 +11,10 @@ require_once __DIR__ . '/../includes/functions.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($config['servername']); ?></title>
-    <link rel="stylesheet" href="templates/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="js/jclock.js"></script>
-    <script src="js/stats.js"></script>
+    <script src="assets/js/jclock.js"></script>
+    <script src="assets/js/stats.js"></script>
 </head>
 <body>
 <nav class="top-nav">
