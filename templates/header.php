@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../includes/functions.php';
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -23,6 +27,9 @@ require_once __DIR__ . '/../includes/config.php';
         <a href="#">База Знаний</a>
         <a href="#">Расписание локаций</a>
         <a href="#">Об игре</a>
+        <?php if (isUserLoggedIn() && isAdmin($_SESSION['user'])): ?>
+        <a href="admin.php">Админка</a>
+        <?php endif; ?>
     </nav>
 </header>
 <main>
