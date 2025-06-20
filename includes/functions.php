@@ -280,6 +280,15 @@ function isBanned($username) {
     return false;
 }
 
+function isAdmin($username) {
+    $query = doQuery('SELECT gm FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = '\'' . addslashes_mssql($username) . '\'', DATABASE_ACCOUNT);
+    if ($query !== false) {
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+        return $row && (int)$row['gm'] > 0;
+    }
+    return false;
+}
+
 // ----- Функции статистики -----
 
 function getAccountsCount() {
