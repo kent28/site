@@ -252,6 +252,16 @@ function isUserLoggedIn() {
     return isset($_SESSION['user']);
 }
 
+function logoutUser($username) {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . ' SET last_logout_time = ' . time() . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
+    unset($_SESSION['user']);
+    session_destroy();
+    return true;
+}
+
 function getAccountInfo($username) {
     $query = doQuery("SELECT * FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
@@ -261,19 +271,22 @@ function getAccountInfo($username) {
 }
 
 function getAccountCharacters($username) {
-    $sql = 'SELECT act_id FROM ' . TABLE_ACCOUNT . ' WHERE act_name = \'' . addslashes_mssql($username) . '\'';
+    $sql = 'SELECT cha_ids FROM ' . TABLE_ACCOUNT . ' WHERE act_name = \'' . addslashes_mssql($username) . '\'';
     $query = doQuery($sql, DATABASE_GAME);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            $actId = (int)$row['act_id'];
-            $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE act_id = ' . $actId, DATABASE_GAME);
-            if ($charQuery !== false) {
-                $names = [];
-                while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
-                    $names[] = $charRow['cha_name'];
+        if ($row && !empty($row['cha_ids'])) {
+            $ids = array_filter(array_map('intval', explode(',', $row['cha_ids'])));
+            if (!empty($ids)) {
+                $idList = implode(',', $ids);
+                $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE cha_id IN (' . $idList . ')', DATABASE_GAME);
+                if ($charQuery !== false) {
+                    $names = [];
+                    while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
+                        $names[] = $charRow['cha_name'];
+                    }
+                    return $names;
                 }
-                return $names;
             }
         }
     }
