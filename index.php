@@ -57,7 +57,9 @@ require_once 'includes/config.php';
             $('#registerLink').on('click', function(e){
                 e.preventDefault();
                 $('#registrationModal').show();
-                $('#registrationContainer').load('templates/register.html');
+                $('#registrationContainer').load('templates/register.html', function(){
+                    $.getScript('js/register.js');
+                });
             });
 
             $('#modalClose').on('click', function(){
