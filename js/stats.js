@@ -11,4 +11,5 @@ $(document).ready(function(){
         });
     }
     loadStats();
+    setInterval(loadStats, 60000);
 });
