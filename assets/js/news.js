@@ -2,17 +2,28 @@ $(function(){
     var allItems = $('.news-item');
     var currentList = allItems;
     var index = 0;
+    var showAll = true;
+    var controls = $('.news-controls');
 
     function showCurrent() {
         allItems.hide().removeClass('active');
-        if (currentList.length) {
+        if (!currentList.length) return;
+
+        if (showAll) {
+            currentList.show().addClass('active');
+        } else {
             currentList.eq(index).show().addClass('active');
         }
     }
-
-    function setList(list) {
+    function setList(list, all) {
         currentList = list;
         index = 0;
+        showAll = all;
+        if (showAll) {
+            controls.hide();
+        } else {
+            controls.show();
+        }
         showCurrent();
     }
 
@@ -36,12 +47,12 @@ $(function(){
         $(this).addClass('active');
         var filter = $(this).data('filter');
         if (filter === 'all') {
-            setList(allItems);
+            setList(allItems, true);
         } else {
             var filtered = allItems.filter('[data-category="'+filter+'"],[data-author="'+filter+'"]');
-            setList(filtered);
+            setList(filtered, false);
         }
     });
 
-    setList(allItems);
+    setList(allItems, true);
 });

@@ -6,7 +6,8 @@ body {
     padding: 0;
     background: linear-gradient(to bottom, #1b2c41 0%, #265075 100%);
     color: #fff;
-    animation: fadeInBody 1s ease-in;
+    /* faster page transition */
+    animation: fadeInBody 0.3s ease-in;
 }
 
 @keyframes fadeInBody {
@@ -261,8 +262,6 @@ footer {
     font-weight: bold;
 }
 
-.news-item { display: none; }
-.news-item.active { display: flex; }
 
 .stats ul,
 .character-stats ul {
@@ -332,4 +331,12 @@ table.ranking td {
 
 table.ranking th {
     background: #333;
+}
+
+/* small image displayed on each page */
+.pirate-img {
+    width: 80px;
+    height: auto;
+    display: block;
+    margin: 10px auto 0 auto;
 }
