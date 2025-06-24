@@ -19,7 +19,7 @@ require_once __DIR__ . '/../includes/functions.php';
 <body>
 <nav class="top-nav">
     <a href="index.php">Главная</a>
-    <a href="#">Сообщество</a>
+    <a href="forum.php">Форум</a>
     <a href="download.php">Загрузки</a>
     <a href="ranking.php">Рейтинги</a>
     <a href="#">База Знаний</a>
