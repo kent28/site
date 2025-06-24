@@ -79,7 +79,7 @@ include 'templates/header.php';
 <button>Пополнить баланс</button>
 
 <h3>Смена пароля</h3>
-<form action="account.php" method="post">
+<form class="styled-form" action="account.php" method="post">
     <input type="hidden" name="action" value="changepw">
     <label>Текущий пароль:</label>
     <input type="password" name="current_password">
@@ -91,7 +91,7 @@ include 'templates/header.php';
 </form>
 
 <h3>Смена email</h3>
-<form action="account.php" method="post">
+<form class="styled-form" action="account.php" method="post">
     <input type="hidden" name="action" value="changemail">
     <label>Новый email:</label>
     <input type="email" name="new_email" value="<?php echo htmlspecialchars($account['email'] ?? ''); ?>">

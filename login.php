@@ -52,7 +52,7 @@ include 'templates/header.php';
     </div>
 <?php endif; ?>
 
-<form action="login.php" method="post">
+<form class="styled-form" action="login.php" method="post">
     <label for="login_username">Имя:</label>
     <input type="text" id="login_username" name="login_username">
     <label for="login_password">Пароль:</label>

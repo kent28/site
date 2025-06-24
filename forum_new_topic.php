@@ -68,7 +68,7 @@ include 'templates/header.php';
     <?php endforeach; ?>
 </div>
 <?php endif; ?>
-<form action="forum_new_topic.php?id=<?php echo $sectionId; ?>" method="post">
+<form class="styled-form" action="forum_new_topic.php?id=<?php echo $sectionId; ?>" method="post">
     <label>Заголовок:</label>
     <input type="text" name="title">
     <label>Сообщение:</label>
