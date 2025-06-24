@@ -439,4 +439,35 @@ function getTopGuilds($limit = 10) {
     });
 }
 
+// ----- Форум -----
+
+function getForumSections() {
+    $file = __DIR__ . '/../data/forum_sections.json';
+    if (!file_exists($file)) {
+        return [];
+    }
+    $data = json_decode(file_get_contents($file), true);
+    return is_array($data) ? $data : [];
+}
+
+function saveForumSections($sections) {
+    $file = __DIR__ . '/../data/forum_sections.json';
+    file_put_contents($file, json_encode($sections, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+}
+
+function getForumTopics($sectionId) {
+    $file = __DIR__ . '/../data/forum_topics_' . (int)$sectionId . '.json';
+    if (!file_exists($file)) {
+        return [];
+    }
+    $data = json_decode(file_get_contents($file), true);
+    return is_array($data) ? $data : [];
+}
+
+function saveForumTopics($sectionId, $topics) {
+    $file = __DIR__ . '/../data/forum_topics_' . (int)$sectionId . '.json';
+    file_put_contents($file, json_encode($topics, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+}
+
+
 ?>
