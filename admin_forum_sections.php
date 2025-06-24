@@ -84,7 +84,7 @@ include 'templates/header.php';
 <?php endforeach; ?>
 </ul>
 <h3>Добавить раздел</h3>
-<form action="admin_forum_sections.php" method="post">
+<form class="styled-form" action="admin_forum_sections.php" method="post">
     <input type="hidden" name="action" value="add">
     <label>Название:</label>
     <input type="text" name="title">

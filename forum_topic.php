@@ -58,7 +58,7 @@ include 'templates/header.php';
     <?php endforeach; ?>
 </div>
 <?php endif; ?>
-<form action="forum_topic.php?section=<?php echo $sectionId; ?>&topic=<?php echo $topicId; ?>" method="post">
+<form class="styled-form" action="forum_topic.php?section=<?php echo $sectionId; ?>&topic=<?php echo $topicId; ?>" method="post">
     <textarea name="content" rows="4" cols="60"></textarea>
     <input type="submit" value="Отправить">
 </form>

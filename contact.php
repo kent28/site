@@ -2,7 +2,7 @@
 include 'templates/header.php';
 ?>
 <h2>Форма обратной связи</h2>
-<form action="#" method="post">
+<form class="styled-form" action="#" method="post">
     <label for="contact_name">Имя:</label>
     <input type="text" id="contact_name" name="contact_name">
     <label for="contact_email">Email:</label>

@@ -38,7 +38,7 @@ include 'templates/header.php';
 <?php if ($success): ?>
     <div class="success"><?php echo htmlspecialchars($success); ?></div>
 <?php endif; ?>
-<form action="edit_news.php" method="post" onsubmit="document.getElementById('content').value=document.getElementById('editor').innerHTML;">
+<form class="styled-form" action="edit_news.php" method="post" onsubmit="document.getElementById('content').value=document.getElementById('editor').innerHTML;">
     <div id="toolbar">
         <button type="button" data-cmd="bold"><b>B</b></button>
         <button type="button" data-cmd="italic"><i>I</i></button>
