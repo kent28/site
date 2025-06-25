@@ -10,6 +10,7 @@ function logDbConnection($db, $host, $user, $status, $message = '') {
     }
     $entry .= PHP_EOL;
     @file_put_contents($file, $entry, FILE_APPEND);
+    error_log($entry);
 }
 
 function selectDB($db) {
