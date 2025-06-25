@@ -1,6 +1,17 @@
 <?php
 $connections = array('account' => false, 'game' => false);
 
+function logDbConnection($db, $host, $user, $status, $message = '') {
+    $file = __DIR__ . '/../data/dbconnect.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $entry = "[$timestamp] DB:$db Host:$host User:$user Status:$status";
+    if ($message !== '') {
+        $entry .= " - $message";
+    }
+    $entry .= PHP_EOL;
+    @file_put_contents($file, $entry, FILE_APPEND);
+}
+
 function selectDB($db) {
     global $connections, $config;
     if (!isset($config['db'][$db])) {
@@ -11,11 +22,14 @@ function selectDB($db) {
         die('Критическая ошибка: Неполная конфигурация базы данных');
     }
     if ($connections[$db] === false) {
+        logDbConnection($db, $dbConfig['host'], $dbConfig['user'], 'attempt');
         try {
             $dsn = "sqlsrv:Server={$dbConfig['host']};Database={$dbConfig['db']};TrustServerCertificate=true";
             $connections[$db] = new PDO($dsn, $dbConfig['user'], $dbConfig['pass']);
             $connections[$db]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            logDbConnection($db, $dbConfig['host'], $dbConfig['user'], 'success');
         } catch (PDOException $e) {
+            logDbConnection($db, $dbConfig['host'], $dbConfig['user'], 'failure', $e->getMessage());
             $msg = $e->getMessage();
             echo '<b>Критическая ошибка</b>: Не удалось подключиться к базе данных!<br />';
             if (!empty($msg)) {
