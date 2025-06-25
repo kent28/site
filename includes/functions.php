@@ -1,17 +1,6 @@
 <?php
 $connections = array('account' => false, 'game' => false);
 
-function logDbConnection($db, $host, $user, $status, $message = '') {
-    $file = __DIR__ . '/../data/dbconnect.log';
-    $timestamp = date('Y-m-d H:i:s');
-    $entry = "[$timestamp] DB:$db Host:$host User:$user Status:$status";
-    if ($message !== '') {
-        $entry .= " - $message";
-    }
-    $entry .= PHP_EOL;
-    @file_put_contents($file, $entry, FILE_APPEND);
-}
-
 function selectDB($db) {
     global $connections, $config;
     if (!isset($config['db'][$db])) {
@@ -22,14 +11,11 @@ function selectDB($db) {
         die('Критическая ошибка: Неполная конфигурация базы данных');
     }
     if ($connections[$db] === false) {
-        logDbConnection($db, $dbConfig['host'], $dbConfig['user'], 'attempt');
         try {
             $dsn = "sqlsrv:Server={$dbConfig['host']};Database={$dbConfig['db']};TrustServerCertificate=true";
             $connections[$db] = new PDO($dsn, $dbConfig['user'], $dbConfig['pass']);
             $connections[$db]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            logDbConnection($db, $dbConfig['host'], $dbConfig['user'], 'success');
         } catch (PDOException $e) {
-            logDbConnection($db, $dbConfig['host'], $dbConfig['user'], 'failure', $e->getMessage());
             $msg = $e->getMessage();
             echo '<b>Критическая ошибка</b>: Не удалось подключиться к базе данных!<br />';
             if (!empty($msg)) {
@@ -65,17 +51,12 @@ function selectDB($db) {
     }
 }
 
-function doQuery($query, $db = '', $params = []) {
+function doQuery($query, $db = '') {
     global $connections;
     if ($db !== '') {
         selectDB($db);
     }
     try {
-        if (!empty($params)) {
-            $stmt = $connections[$db]->prepare($query);
-            $stmt->execute($params);
-            return $stmt;
-        }
         return $connections[$db]->query($query);
     } catch (PDOException $e) {
         if (defined('DEBUG') && DEBUG) {
@@ -161,59 +142,85 @@ function validEMail($email) {
 }
 
 function checkDuplicateAccountName($username) {
-    $query = doQuery('SELECT COUNT(*) FROM account_login WHERE name = ?', DATABASE_ACCOUNT, [$username]);
-    return $query && $query->fetchColumn() > 0;
+    $query = doQuery("SELECT COUNT(*) FROM account_login WHERE name = '{$username}'", 'account');
+    return $query->fetchColumn() > 0;
 }
 
 function checkDuplicateEMail($email) {
-    $query = doQuery('SELECT COUNT(*) FROM account_login WHERE email = ?', DATABASE_ACCOUNT, [$email]);
-    return $query && $query->fetchColumn() > 0;
+    $query = doQuery("SELECT COUNT(*) FROM account_login WHERE email = '{$email}'", 'account');
+    return $query->fetchColumn() > 0;
 }
 
 function createAccount($username, $password, $email) {
     global $connections, $config;
 
-    $timestamp = time();
-    $hash = strtoupper(md5($password));
+    $data = [
+        ['field' => 'name', 'value' => $username, 'type' => 's'],
+        ['field' => 'password', 'value' => strtoupper(md5($password)), 'type' => 's'],
+        ['field' => 'originalpassword', 'value' => $password, 'type' => 's'],
+        ['field' => 'sid', 'value' => 0, 'type' => 'i'],
+        ['field' => 'login_status', 'value' => 0, 'type' => 'i'],
+        ['field' => 'enable_login_tick', 'value' => 0, 'type' => 'i'],
+        ['field' => 'login_group', 'value' => '', 'type' => 's'],
+        ['field' => 'last_login_time', 'value' => time(), 'type' => 'd'],
+        ['field' => 'last_logout_time', 'value' => time(), 'type' => 'd'],
+        ['field' => 'last_login_ip', 'value' => '', 'type' => 's'],
+        ['field' => 'enable_login_time', 'value' => time(), 'type' => 'd'],
+        ['field' => 'total_live_time', 'value' => 0, 'type' => 'i'],
+        ['field' => 'last_login_mac', 'value' => '', 'type' => 's'],
+        ['field' => 'ban', 'value' => 0, 'type' => 'i'],
+        ['field' => 'email', 'value' => $email, 'type' => 's']
+    ];
+
+    $sql = getInsert(TABLE_ACCOUNT_LOGIN, $data);
+    error_log("Generated SQL: $sql");
 
     try {
-        // Insert into account_login
-        $sql = 'INSERT INTO ' . TABLE_ACCOUNT_LOGIN . ' (name, password, originalpassword, sid, login_status, enable_login_tick, login_group, last_login_time, last_logout_time, last_login_ip, enable_login_time, total_live_time, last_login_mac, ban, email) VALUES (?, ?, ?, 0, 0, 0, \'\', ?, ?, \'\', ?, 0, \'\', 0, ?)';
-        $params = [$username, $hash, $password, $timestamp, $timestamp, $timestamp, $email];
-        $query = doQuery($sql, DATABASE_ACCOUNT, $params);
-        if ($query === false) {
-            return false;
-        }
-
-        // Determine account id
-        if ($config['max_compatibility_mode']) {
-            $query = doQuery('SELECT id FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = ?', DATABASE_ACCOUNT, [$username]);
+        $query = doQuery($sql, DATABASE_ACCOUNT);
+        if ($query !== false) {
+            error_log("First query executed successfully");
+            if ($config['max_compatibility_mode']) {
+                $query = doQuery('SELECT id FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = \'' . addslashes_mssql($username) . '\'', DATABASE_ACCOUNT);
+            } else {
+                $query = doQuery('SELECT (MAX(act_id) + 1) AS id FROM ' . TABLE_ACCOUNT, DATABASE_GAME);
+            }
+            if ($query !== false) {
+                error_log("Second query executed successfully");
+                $row = $query->fetch(PDO::FETCH_ASSOC);
+                if ($row) {
+                    $id = (int)$row['id'];
+                    error_log("Fetched ID: $id");
+                    $gm = $config['is_gm_server'] ? (int)$config['new_gm_level'] : 0;
+                    $gm = max(0, min($gm, 99));
+                    if ($id > 0) {
+                        $insertQuery = 'INSERT INTO account (act_id, act_name, gm) VALUES (' . $id . ',\'' . addslashes_mssql($username) . '\',' . $gm . ')';
+                        error_log("Insert query: $insertQuery");
+                        $query = doQuery($insertQuery, DATABASE_GAME);
+                        if ($query !== false) {
+                            error_log("Account created successfully");
+                            return true;
+                        } else {
+                            error_log("Failed to insert into account table");
+                        }
+                    } else {
+                        error_log("Invalid ID fetched");
+                    }
+                } else {
+                    error_log("Failed to fetch ID");
+                }
+            } else {
+                error_log("Second query failed");
+            }
         } else {
-            // `MAX(act_id) + 1` returns NULL on empty tables, so use ISNULL to ensure we start at 1
-            $query = doQuery('SELECT ISNULL(MAX(act_id), 0) + 1 AS id FROM ' . TABLE_ACCOUNT, DATABASE_GAME);
+            $error = true;
+            $errorMessage = $query->errorInfo()[2];
+            error_log("First query failed: $errorMessage");
         }
-
-        if ($query === false) {
-            return false;
-        }
-
-        $row = $query->fetch(PDO::FETCH_ASSOC);
-        if (!$row) {
-            return false;
-        }
-
-        $id = (int)$row['id'];
-        $gm = $config['is_gm_server'] ? (int)$config['new_gm_level'] : 0;
-        $gm = max(0, min($gm, 99));
-
-        // Insert into account table
-        $query = doQuery('INSERT INTO account (act_id, act_name, gm) VALUES (?, ?, ?)', DATABASE_GAME, [$id, $username, $gm]);
-
-        return $query !== false;
     } catch (PDOException $e) {
-        error_log('Ошибка при создании аккаунта: ' . $e->getMessage());
+        error_log("Ошибка при создании аккаунта: " . $e->getMessage());
         return false;
     }
+    return false;
 }
 
 function loginUser($username, $password) {
@@ -221,7 +228,11 @@ function loginUser($username, $password) {
         session_start();
     }
 
-    $query = doQuery('SELECT password FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = ?', DATABASE_ACCOUNT, [$username]);
+    $query = doQuery(
+        'SELECT password FROM ' . TABLE_ACCOUNT_LOGIN .
+        ' WHERE name = \'' . addslashes_mssql($username) . '\'',
+        DATABASE_ACCOUNT
+    );
 
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
@@ -245,14 +256,14 @@ function logoutUser($username) {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-    doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . ' SET last_logout_time = ? WHERE name = ?', DATABASE_ACCOUNT, [time(), $username]);
+    doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . ' SET last_logout_time = ' . time() . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     unset($_SESSION['user']);
     session_destroy();
     return true;
 }
 
 function getAccountInfo($username) {
-    $query = doQuery('SELECT * FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = ?', DATABASE_ACCOUNT, [$username]);
+    $query = doQuery("SELECT * FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
         return $query->fetch(PDO::FETCH_ASSOC);
     }
@@ -260,7 +271,8 @@ function getAccountInfo($username) {
 }
 
 function getAccountCharacters($username) {
-    $query = doQuery('SELECT act_id, cha_ids FROM ' . TABLE_ACCOUNT . ' WHERE act_name = ?', DATABASE_GAME, [$username]);
+    $sql = 'SELECT act_id, cha_ids FROM ' . TABLE_ACCOUNT . ' WHERE act_name = \'' . addslashes_mssql($username) . '\'';
+    $query = doQuery($sql, DATABASE_GAME);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
         if ($row) {
@@ -269,8 +281,8 @@ function getAccountCharacters($username) {
             if (!empty($row['cha_ids'])) {
                 $ids = array_filter(array_map('intval', explode(',', $row['cha_ids'])));
                 if (!empty($ids)) {
-                    $placeholders = implode(',', array_fill(0, count($ids), '?'));
-                    $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE cha_id IN (' . $placeholders . ')', DATABASE_GAME, $ids);
+                    $idList = implode(',', $ids);
+                    $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE cha_id IN (' . $idList . ')', DATABASE_GAME);
                     if ($charQuery !== false) {
                         while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
                             $names[] = $charRow['cha_name'];
@@ -281,7 +293,7 @@ function getAccountCharacters($username) {
 
             if (empty($names) && isset($row['act_id'])) {
                 $actId = (int)$row['act_id'];
-                $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE act_id = ?', DATABASE_GAME, [$actId]);
+                $charQuery = doQuery('SELECT cha_name FROM ' . TABLE_CHARACTERS . ' WHERE act_id = ' . $actId, DATABASE_GAME);
                 if ($charQuery !== false) {
                     while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
                         $names[] = $charRow['cha_name'];
@@ -296,18 +308,18 @@ function getAccountCharacters($username) {
 }
 
 function updateAccountEmail($username, $email) {
-    $query = doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . ' SET email = ? WHERE name = ?', DATABASE_ACCOUNT, [$email, $username]);
+    $query = doQuery("UPDATE " . TABLE_ACCOUNT_LOGIN . " SET email = '" . addslashes_mssql($email) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     return $query !== false;
 }
 
 function updateAccountPassword($username, $password) {
     $hash = strtoupper(md5($password));
-    $query = doQuery('UPDATE ' . TABLE_ACCOUNT_LOGIN . ' SET password = ?, originalpassword = ? WHERE name = ?', DATABASE_ACCOUNT, [$hash, $password, $username]);
+    $query = doQuery("UPDATE " . TABLE_ACCOUNT_LOGIN . " SET password = '" . $hash . "', originalpassword = '" . addslashes_mssql($password) . "' WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     return $query !== false;
 }
 
 function isBanned($username) {
-    $query = doQuery('SELECT ban FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = ?', DATABASE_ACCOUNT, [$username]);
+    $query = doQuery("SELECT ban FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
         return $row && (int)$row['ban'] > 0;
@@ -316,7 +328,7 @@ function isBanned($username) {
 }
 
 function isAdmin($username) {
-    $query = doQuery('SELECT gm FROM ' . TABLE_ACCOUNT . ' WHERE act_name = ?', DATABASE_GAME, [$username]);
+    $query = doQuery("SELECT gm FROM " . TABLE_ACCOUNT . " WHERE act_name = '" . addslashes_mssql($username) . "'", DATABASE_GAME);
     if ($query !== false) {
         $row = $query->fetch(PDO::FETCH_ASSOC);
         return $row && (int)$row['gm'] == 99;
@@ -376,19 +388,16 @@ function getCachedRanking($file, $time, $callback) {
 function getTopExpPlayers($limit = 10) {
     global $config;
     $cache = __DIR__ . '/../data/rank_exp.json';
-
     return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
-        $sql = 'SELECT TOP ' . (int)$limit .
-               ' c.cha_name, c.degree, c.exp FROM ' . TABLE_CHARACTERS . ' c ' .
-               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id ' .
-               'WHERE a.gm <> 99 ' .
-               'ORDER BY CASE WHEN c.exp < 0 THEN c.exp + 4294967296 ELSE c.exp END DESC';
-
+       $sql = 'SELECT TOP ' . (int)$limit .
+       ' c.cha_name, c.degree, c.exp FROM ' . TABLE_CHARACTERS . ' c ' .
+       'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id ' .
+       'WHERE a.gm <> 99 ' .
+       'ORDER BY CASE WHEN c.exp < 0 THEN c.exp + 4294967296 ELSE c.exp END DESC';
         $query = doQuery($sql, DATABASE_GAME);
         if ($query === false) {
             return false;
         }
-
         $result = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $result[] = [
@@ -397,7 +406,6 @@ function getTopExpPlayers($limit = 10) {
                 'exp'   => (int)$row['exp']
             ];
         }
-
         return $result;
     });
 }
@@ -405,19 +413,16 @@ function getTopExpPlayers($limit = 10) {
 function getTopGoldPlayers($limit = 10) {
     global $config;
     $cache = __DIR__ . '/../data/rank_gold.json';
-
     return getCachedRanking($cache, $config['ranking_cache'], function () use ($limit) {
         $sql = 'SELECT TOP ' . (int)$limit .
-               ' c.cha_name, c.degree, c.gd FROM ' . TABLE_CHARACTERS . ' c ' .
-               'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id ' .
-               'WHERE a.gm <> 99 ' .
-               'ORDER BY c.gd DESC';
-
+       ' c.cha_name, c.degree, c.gd FROM ' . TABLE_CHARACTERS . ' c ' .
+       'JOIN ' . TABLE_ACCOUNT . ' a ON c.act_id = a.act_id ' .
+       'WHERE a.gm <> 99 ' .
+       'ORDER BY c.gd DESC';
         $query = doQuery($sql, DATABASE_GAME);
         if ($query === false) {
             return false;
         }
-
         $result = [];
         while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
             $result[] = [
@@ -426,7 +431,6 @@ function getTopGoldPlayers($limit = 10) {
                 'gold'  => (int)$row['gd']
             ];
         }
-
         return $result;
     });
 }
@@ -453,36 +457,5 @@ function getTopGuilds($limit = 10) {
         return $result;
     });
 }
-
-// ----- Форум -----
-
-function getForumSections() {
-    $file = __DIR__ . '/../data/forum_sections.json';
-    if (!file_exists($file)) {
-        return [];
-    }
-    $data = json_decode(file_get_contents($file), true);
-    return is_array($data) ? $data : [];
-}
-
-function saveForumSections($sections) {
-    $file = __DIR__ . '/../data/forum_sections.json';
-    file_put_contents($file, json_encode($sections, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-}
-
-function getForumTopics($sectionId) {
-    $file = __DIR__ . '/../data/forum_topics_' . (int)$sectionId . '.json';
-    if (!file_exists($file)) {
-        return [];
-    }
-    $data = json_decode(file_get_contents($file), true);
-    return is_array($data) ? $data : [];
-}
-
-function saveForumTopics($sectionId, $topics) {
-    $file = __DIR__ . '/../data/forum_topics_' . (int)$sectionId . '.json';
-    file_put_contents($file, json_encode($topics, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-}
-
 
 ?>
