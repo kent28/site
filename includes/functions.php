@@ -189,7 +189,8 @@ function createAccount($username, $password, $email) {
         if ($config['max_compatibility_mode']) {
             $query = doQuery('SELECT id FROM ' . TABLE_ACCOUNT_LOGIN . ' WHERE name = ?', DATABASE_ACCOUNT, [$username]);
         } else {
-            $query = doQuery('SELECT (MAX(act_id) + 1) AS id FROM ' . TABLE_ACCOUNT, DATABASE_GAME);
+            // `MAX(act_id) + 1` returns NULL on empty tables, so use ISNULL to ensure we start at 1
+            $query = doQuery('SELECT ISNULL(MAX(act_id), 0) + 1 AS id FROM ' . TABLE_ACCOUNT, DATABASE_GAME);
         }
 
         if ($query === false) {
