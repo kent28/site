@@ -38,6 +38,6 @@ require_once __DIR__ . '/../includes/functions.php';
 </nav>
 <header>
     <h1><?php echo htmlspecialchars($config['servername']); ?></h1>
-    <img class="pirate-img" src="assets/img/anime-pirate.svg" alt="Anime Pirate">
+
 </header>
 <main>

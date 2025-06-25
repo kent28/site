@@ -6,7 +6,6 @@ body {
     padding: 0;
     background: linear-gradient(to bottom, #1b2c41 0%, #265075 100%);
     color: #fff;
-    /* faster page transition */
     animation: fadeInBody 0.3s ease-in;
 }
 
@@ -24,14 +23,13 @@ body {
     justify-content: center;
 }
 
-
 .top-nav a {
     color: #ffcc00;
     margin: 0 10px;
     text-decoration: none;
     font-family: 'Pirata One', cursive;
     font-size: 1.1em;
-    transition: transform 0.3s;
+    transition: transform 0.3s, color 0.3s;
 }
 
 .top-nav a:hover {
@@ -40,23 +38,29 @@ body {
     transform: translateY(-3px);
 }
 
-/* Banner area */
 header {
-    background: linear-gradient(to bottom, #734419 0%, #332009 100%);
+    position: relative;
+    background: linear-gradient(to bottom, rgba(115, 68, 25, 0.8), rgba(51, 32, 9, 0.8)),
+                url('assets/img/anime-pirate.jpg') no-repeat center center;
+    background-size: cover;
     height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-bottom: 4px solid #ffcc00;
     box-shadow: 0 0 15px #ffcc00;
-    padding: 0;
+    color: white;
+    overflow: hidden;
 }
 
 header h1 {
     margin: 0;
     font-family: 'Pirata One', 'Cinzel', serif;
     color: #ffd86b;
-    text-shadow: 0 0 10px #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 3rem;
+    position: relative;
+    z-index: 1;
     animation: wave 4s infinite ease-in-out;
 }
 
@@ -66,8 +70,21 @@ header h1 {
     100% { transform: skewX(-5deg); }
 }
 
+@media (max-width: 600px) {
+    header {
+        height: 200px;
+        background-position: center top;
+    }
+    header h1 {
+        font-size: 1.8rem;
+    }
+}
+
 main {
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 footer {
@@ -78,6 +95,7 @@ footer {
     border-top: 4px solid #ffcc00;
     box-shadow: 0 0 15px #ffcc00;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -87,8 +105,9 @@ footer {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
 }
+
 .modal-content {
     background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
@@ -99,6 +118,7 @@ footer {
     max-width: 600px;
     position: relative;
 }
+
 .close {
     color: #aaa;
     position: absolute;
@@ -109,13 +129,13 @@ footer {
     cursor: pointer;
 }
 
-/* Layout elements for main page */
-
 .main-container {
     display: flex;
     gap: 20px;
     justify-content: center;
     align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
 }
 
 .sidebar {
@@ -145,7 +165,7 @@ footer {
     font-size: 3em;
     color: #ffcc00;
     margin: 20px 0;
-    text-shadow: 0 0 10px #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .slider {
@@ -190,6 +210,7 @@ footer {
     text-decoration: none;
     font-weight: bold;
     font-size: 0.9em;
+    transition: background 0.3s;
 }
 
 .news-nav a.active { background: #666; }
@@ -260,8 +281,8 @@ footer {
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
+    transition: background 0.3s;
 }
-
 
 .stats ul,
 .character-stats ul {
@@ -297,6 +318,7 @@ footer {
     cursor: pointer;
     margin-bottom: 5px;
     font-weight: bold;
+    transition: background 0.3s;
 }
 
 .login-box a {
@@ -309,6 +331,7 @@ footer {
     color: #ffcc00;
     margin-right: 10px;
     text-decoration: none;
+    transition: text-shadow 0.3s;
 }
 
 .subnav a.active {
@@ -333,15 +356,6 @@ table.ranking th {
     background: #333;
 }
 
-/* small image displayed on each page */
-.pirate-img {
-    width: 80px;
-    height: auto;
-    display: block;
-    margin: 10px auto 0 auto;
-}
-
-/* Generic form styling used across the site */
 .styled-form {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid #ffcc00;
@@ -380,4 +394,5 @@ table.ranking th {
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    transition: background 0.3s;
 }
