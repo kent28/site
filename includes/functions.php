@@ -169,6 +169,7 @@ function createAccount($username, $password, $email) {
         ['field' => 'total_live_time', 'value' => 0, 'type' => 'i'],
         ['field' => 'last_login_mac', 'value' => '', 'type' => 's'],
         ['field' => 'ban', 'value' => 0, 'type' => 'i'],
+        ['field' => 'donat', 'value' => 0, 'type' => 'i'],
         ['field' => 'email', 'value' => $email, 'type' => 's']
     ];
 
