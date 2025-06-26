@@ -371,6 +371,16 @@ function getServerLoad() {
     return 0;
 }
 
+function getServerStatus() {
+    global $config;
+    $fp = @fsockopen($config['server_host'], $config['server_port'], $errno, $errstr, 1);
+    if ($fp) {
+        fclose($fp);
+        return 'Онлайн';
+    }
+    return 'Оффлайн';
+}
+
 function getCachedRanking($file, $time, $callback) {
     if (file_exists($file) && (time() - filemtime($file) < $time)) {
         $data = json_decode(file_get_contents($file), true);

@@ -6,7 +6,8 @@ $(document).ready(function(){
             $('#stat-accounts').text(data.accounts);
             $('#stat-characters').text(data.characters);
             $('#stat-guilds').text(data.guilds);
-            $('#stat-gm-online').text(data.gm_online);
+            $('#stat-server').text(data.server_status);
+            $('#stat-port').text(data.server_port);
             $('#stat-load').text(data.load + '%');
         });
     }
