@@ -75,8 +75,8 @@ include 'templates/header.php';
         <li><?php echo htmlspecialchars($char); ?></li>
     <?php endforeach; ?>
 </ul>
-<p>Донат валюта: 0</p>
-<button>Пополнить баланс</button>
+<p>Донат валюта: <?php echo htmlspecialchars($account['donat'] ?? 0); ?></p>
+<p><a href="donate.php">Пополнить баланс</a></p>
 
 <h3>Смена пароля</h3>
 <form class="styled-form" action="account.php" method="post">
