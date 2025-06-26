@@ -10,6 +10,7 @@
             <button id="registerLink">Регистрация</button>
             <a href="#">Я забыл свой пароль</a>
         <?php else: ?>
+            <?php $account = getAccountInfo($_SESSION['user']); ?>
             <h3>Личный кабинет</h3>
             <p>Привет, <?php echo htmlspecialchars($_SESSION['user']); ?>!</p>
             <p>Ваши персонажи:</p>
@@ -18,7 +19,7 @@
                     <li><?php echo htmlspecialchars($char); ?></li>
                 <?php endforeach; ?>
             </ul>
-            <p>Донат валюта: 0</p>
+            <p>Донат валюта: <?php echo htmlspecialchars($account['donat'] ?? 0); ?></p>
             <a href="account.php">Редактировать профиль</a><br>
             <a href="logout.php">Выйти</a>
         <?php endif; ?>

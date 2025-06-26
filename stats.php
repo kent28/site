@@ -10,7 +10,8 @@ $stats = [
     'accounts' => getAccountsCount(),
     'characters' => getCharactersCount(),
     'guilds' => getGuildsCount(),
-    'gm_online' => getGMOnline(),
+    'server_status' => getServerStatus(),
+    'server_port' => $config['server_port'],
     'load' => getServerLoad()
 ];
 

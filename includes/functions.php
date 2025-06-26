@@ -169,6 +169,7 @@ function createAccount($username, $password, $email) {
         ['field' => 'total_live_time', 'value' => 0, 'type' => 'i'],
         ['field' => 'last_login_mac', 'value' => '', 'type' => 's'],
         ['field' => 'ban', 'value' => 0, 'type' => 'i'],
+        ['field' => 'donat', 'value' => 0, 'type' => 'i'],
         ['field' => 'email', 'value' => $email, 'type' => 's']
     ];
 
@@ -366,8 +367,31 @@ function getGMOnline() {
 }
 
 function getServerLoad() {
-    // Здесь может быть логика вычисления нагрузки сервера
+    // Попытка вычислить загрузку процессора в процентах
+    if (function_exists('sys_getloadavg')) {
+        $load = sys_getloadavg();
+        if ($load !== false && isset($load[0])) {
+            // Количество ядер, если возможно определить
+            $cores = (int) trim(@shell_exec('nproc 2>/dev/null'));
+            if ($cores <= 0) {
+                $cores = 1;
+            }
+            // Изменяем расчет процентов, чтобы 1.0 нагрузки равнялась 2.5%
+            $percent = ($load[0] / $cores) * 2.5;
+            return (int) max(0, min(100, round($percent)));
+        }
+    }
     return 0;
+}
+
+function getServerStatus() {
+    global $config;
+    $fp = @fsockopen($config['server_host'], $config['server_port'], $errno, $errstr, 1);
+    if ($fp) {
+        fclose($fp);
+        return 'Онлайн';
+    }
+    return 'Оффлайн';
 }
 
 function getCachedRanking($file, $time, $callback) {
