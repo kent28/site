@@ -19,12 +19,10 @@ require_once __DIR__ . '/../includes/functions.php';
 <body>
 <nav class="top-nav">
     <a href="index.php">Главная</a>
-    <a href="forum.php">Форум</a>
     <a href="download.php">Загрузки</a>
     <a href="ranking.php">Рейтинги</a>
     <a href="#">База Знаний</a>
     <a href="#">Расписание локаций</a>
-    <a href="#">Об игре</a>
     <?php if (isUserLoggedIn()): ?>
         <a href="account.php">Личный кабинет</a>
         <?php if (isAdmin($_SESSION['user'])): ?>

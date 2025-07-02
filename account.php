@@ -75,8 +75,8 @@ include 'templates/header.php';
         <li><?php echo htmlspecialchars($char); ?></li>
     <?php endforeach; ?>
 </ul>
-<p>Донат валюта: 0</p>
-<button>Пополнить баланс</button>
+<p>Донат валюта: <?php echo htmlspecialchars($account['donat'] ?? 0); ?></p>
+<p><a href="donate.php">Пополнить баланс</a></p>
 
 <h3>Смена пароля</h3>
 <form class="styled-form" action="account.php" method="post">
@@ -90,11 +90,6 @@ include 'templates/header.php';
     <input type="submit" value="Сменить пароль">
 </form>
 
-<h3>Смена email</h3>
-<form class="styled-form" action="account.php" method="post">
-    <input type="hidden" name="action" value="changemail">
-    <label>Новый email:</label>
-    <input type="email" name="new_email" value="<?php echo htmlspecialchars($account['email'] ?? ''); ?>">
-    <input type="submit" value="Изменить email">
-</form>
+
 <?php include 'templates/footer.php'; ?>
+<?php include 'templates/left_sidebar.php'; ?>

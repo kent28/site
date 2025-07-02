@@ -5,9 +5,13 @@ include 'templates/header.php';
     <?php include 'templates/left_sidebar.php'; ?>
 
     <div class="main-content">
-        <h2>Скачать</h2>
-        <p><a href="#">Скачать игру</a></p>
-    </div>
+    <h2>Скачать</h2>
+    <p>
+        <a href="/download/NewEra.exe" download>
+            <img src="/assets/img/download.png" alt="Скачать игру" class="download-button">
+        </a>
+    </p>
+</div>
 
     <?php include 'templates/right_sidebar.php'; ?>
 </div>
