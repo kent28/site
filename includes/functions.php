@@ -319,6 +319,16 @@ function updateAccountPassword($username, $password) {
     return $query !== false;
 }
 
+function updateDonationBalance($username, $delta) {
+    $delta = (int)$delta;
+    $query = doQuery(
+        "UPDATE " . TABLE_ACCOUNT_LOGIN . " SET donat = donat + " . $delta .
+        " WHERE name = '" . addslashes_mssql($username) . "'",
+        DATABASE_ACCOUNT
+    );
+    return $query !== false;
+}
+
 function isBanned($username) {
     $query = doQuery("SELECT ban FROM " . TABLE_ACCOUNT_LOGIN . " WHERE name = '" . addslashes_mssql($username) . "'", DATABASE_ACCOUNT);
     if ($query !== false) {
@@ -376,8 +386,8 @@ function getServerLoad() {
             if ($cores <= 0) {
                 $cores = 1;
             }
-            // Изменяем расчет процентов, чтобы 1.0 нагрузки равнялась 2.5%
-            $percent = ($load[0] / $cores) * 2.5;
+            // 1.0 нагрузки на одно ядро = 100%
+            $percent = ($load[0] / $cores) * 100;
             return (int) max(0, min(100, round($percent)));
         }
     }

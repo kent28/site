@@ -21,6 +21,7 @@ require_once __DIR__ . '/../includes/functions.php';
     <a href="index.php">Главная</a>
     <a href="download.php">Загрузки</a>
     <a href="ranking.php">Рейтинги</a>
+    <a href="store.php">Магазин</a>
     <a href="#">База Знаний</a>
     <a href="#">Расписание локаций</a>
     <?php if (isUserLoggedIn()): ?>
