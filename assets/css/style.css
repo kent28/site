@@ -349,6 +349,23 @@ table.ranking th {
     background: #333;
 }
 
+table.shop {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+table.shop th,
+table.shop td {
+    border: 1px solid #444;
+    padding: 4px 6px;
+    text-align: left;
+}
+
+table.shop th {
+    background: #333;
+}
+
 /* small image displayed on each page */
 .pirate-img {
     width: 80px;
