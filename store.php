@@ -1,8 +1,14 @@
 <?php
 require_once 'includes/config.php';
 require_once 'includes/functions.php';
+require_once 'includes/inventory.php';
 
 session_start();
+
+$charactersInfo = [];
+if (isUserLoggedIn()) {
+    $charactersInfo = getAccountCharactersInfo($_SESSION['user']);
+}
 
 $itemsFile = __DIR__ . '/data/items.json';
 $items = [];
@@ -19,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id'])) {
         exit;
     }
     $id = (int)$_POST['item_id'];
+    $charId = isset($_POST['char_id']) ? (int)$_POST['char_id'] : 0;
     $item = null;
     foreach ($items as $it) {
         if ((int)$it['id'] === $id) {
@@ -32,6 +39,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['item_id'])) {
             if (updateDonationBalance($_SESSION['user'], -$item['price'])) {
                 $success = 'Вы приобрели ' . htmlspecialchars($item['name']);
                 $account['donat'] -= $item['price'];
+                if ($charId > 0 && isset($item['inv'])) {
+                    if (addItemToInventory($charId, $item['inv'])) {
+                        $success .= ' и предмет отправлен персонажу.';
+                    } else {
+                        $errors[] = 'Не удалось выдать предмет.';
+                    }
+                }
             } else {
                 $errors[] = 'Не удалось обновить баланс.';
             }
@@ -72,6 +86,17 @@ include 'templates/header.php';
                             <?php if (isUserLoggedIn()): ?>
                                 <form method="post" action="store.php">
                                     <input type="hidden" name="item_id" value="<?php echo (int)$it['id']; ?>">
+                                    <?php if (isset($it['inv'])): ?>
+                                        <?php if (!empty($charactersInfo)): ?>
+                                            <select name="char_id">
+                                                <?php foreach ($charactersInfo as $c): ?>
+                                                    <option value="<?php echo (int)$c['id']; ?>"><?php echo htmlspecialchars($c['name']); ?></option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        <?php else: ?>
+                                            Нет персонажей
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                     <input type="submit" value="Купить">
                                 </form>
                             <?php else: ?>

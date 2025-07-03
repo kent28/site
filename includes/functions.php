@@ -319,6 +319,43 @@ function updateAccountPassword($username, $password) {
     return $query !== false;
 }
 
+function getAccountCharactersInfo($username) {
+    $sql = 'SELECT act_id, cha_ids FROM ' . TABLE_ACCOUNT . ' WHERE act_name = '\'' . addslashes_mssql($username) . '\'';
+    $query = doQuery($sql, DATABASE_GAME);
+    if ($query !== false) {
+        $row = $query->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $chars = [];
+
+            if (!empty($row['cha_ids'])) {
+                $ids = array_filter(array_map('intval', explode(',', $row['cha_ids'])));
+                if (!empty($ids)) {
+                    $idList = implode(',', $ids);
+                    $charQuery = doQuery('SELECT cha_id, cha_name FROM ' . TABLE_CHARACTERS . ' WHERE cha_id IN (' . $idList . ')', DATABASE_GAME);
+                    if ($charQuery !== false) {
+                        while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
+                            $chars[] = ['id' => (int)$charRow['cha_id'], 'name' => $charRow['cha_name']];
+                        }
+                    }
+                }
+            }
+
+            if (empty($chars) && isset($row['act_id'])) {
+                $actId = (int)$row['act_id'];
+                $charQuery = doQuery('SELECT cha_id, cha_name FROM ' . TABLE_CHARACTERS . ' WHERE act_id = ' . $actId, DATABASE_GAME);
+                if ($charQuery !== false) {
+                    while ($charRow = $charQuery->fetch(PDO::FETCH_ASSOC)) {
+                        $chars[] = ['id' => (int)$charRow['cha_id'], 'name' => $charRow['cha_name']];
+                    }
+                }
+            }
+
+            return $chars;
+        }
+    }
+    return [];
+}
+
 function updateDonationBalance($username, $delta) {
     $delta = (int)$delta;
     $query = doQuery(
